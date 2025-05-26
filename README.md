@@ -1,5 +1,21 @@
 # 日本の祝日カレンダー AWS CDK
 
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)](https://www.python.org)
+[![AWS CDK](https://img.shields.io/badge/AWS%20CDK-v2.162+-orange.svg?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/cdk/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+
+[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?logo=aws-lambda&logoColor=white)](https://aws.amazon.com/lambda/)
+[![Amazon DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-4053D6?logo=amazon-dynamodb&logoColor=white)](https://aws.amazon.com/dynamodb/)
+[![Amazon EventBridge](https://img.shields.io/badge/Amazon-EventBridge-FF4F8B?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/eventbridge/)
+[![Infrastructure as Code](https://img.shields.io/badge/Infrastructure-as%20Code-blue?logo=terraform&logoColor=white)](https://aws.amazon.com/what-is/iac/)
+
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/jp-holiday-calendar/graphs/commit-activity)
+[![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/jp-holiday-calendar)](https://github.com/yourusername/jp-holiday-calendar/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/yourusername/jp-holiday-calendar)](https://github.com/yourusername/jp-holiday-calendar/issues)
+
 日本の祝日を自動的に取得し、Amazon DynamoDBに保存するサーバーレスアプリケーションです。毎月1日に自動実行され、常に最新の祝日データを維持します。
 
 ## 🏗️ アーキテクチャ概要
