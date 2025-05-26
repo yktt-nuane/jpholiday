@@ -43,7 +43,7 @@
 - [AWSアカウント](https://aws.amazon.com/jp/account/) - 適切なIAM権限を持つ
 - [AWS CLI](https://aws.amazon.com/jp/cli/) v2.x - 認証情報が設定済み
 - [Python](https://www.python.org/) 3.9以上
-- [Node.js](https://nodejs.org/) v16以上（CDK CLI用）
+- [Node.js](https://nodejs.org/) v16以上（CDK CLI・pre-commitフック用）
 - [AWS CDK Toolkit](https://docs.aws.amazon.com/cdk/latest/guide/cli.html) - `npm install -g aws-cdk`
 
 ## 🚀 セットアップ手順
@@ -97,6 +97,26 @@ JPHOLIDAY_LAYER_ARN=arn:aws:lambda:ap-northeast-1:123456789012:layer:jpholiday-l
 AWS_ACCOUNT=123456789012
 AWS_REGION=ap-northeast-1
 ```
+
+### 5. 開発環境の追加設定（推奨）
+
+品質保証のため、pre-commitフックの設定を推奨します：
+
+```bash
+# Huskyのセットアップ（Node.jsが必要）
+npm install
+
+# pre-commitフックの有効化
+npm run prepare
+
+# 手動でpre-commitフックをテスト
+.husky/pre-commit
+```
+
+pre-commitフックは以下を自動実行します：
+- コードフォーマット（Black、isort、Ruff）
+- コード品質チェック（Ruff、mypy）
+- ユニットテスト（pytest）
 
 ## 🔧 jpholiday Lambda Layerの作成
 
@@ -172,10 +192,15 @@ jp-holiday-calendar/
 │   └── unit/
 │       ├── __init__.py
 │       └── test_jpholiday_stack.py # ユニットテスト
+├── .husky/
+│   └── pre-commit                  # Git pre-commitフック
 ├── requirements.txt                # 本番依存関係
 ├── requirements-dev.txt           # 開発依存関係
+├── package.json                   # Node.js依存関係（開発ツール用）
+├── pyproject.toml                 # Python設定（Black、isort、Ruff、mypy）
 ├── cdk.json                       # CDK設定
 ├── .env                          # 環境変数（要作成）
+├── .env.example                  # 環境変数の設定例
 └── README.md
 ```
 
@@ -228,9 +253,28 @@ pytest --cov=jpholiday
 
 # 詳細出力でテスト実行
 pytest -v
+
+# 特定のテストファイルのみ実行
+pytest tests/unit/test_jpholiday_stack.py -v
 ```
 
 ## 🔧 開発・運用コマンド
+
+### 開発ワークフロー
+
+```bash
+# 開発開始時
+source .venv/bin/activate  # 仮想環境の有効化
+
+# コード品質チェック（手動実行）
+npm run lint               # リント・型チェック
+npm run format            # コードフォーマット
+npm run test              # テスト実行
+
+# コミット（pre-commitフックが自動実行）
+git add .
+git commit -m "feat: add new feature"
+```
 
 ### CDKコマンド
 
@@ -332,15 +376,19 @@ Task timed out after 30.00 seconds
 ### 依存関係の更新
 
 ```bash
-# 依存関係の確認
+# Python依存関係の確認と更新
 pip list --outdated
-
-# requirements.txtの更新
 pip freeze > requirements.txt
+
+# 開発ツールの更新
+pip install --upgrade pytest black isort ruff mypy
 
 # CDKの更新
 npm update -g aws-cdk
 pip install --upgrade aws-cdk-lib
+
+# Node.js開発依存関係の更新
+npm update --save-dev
 ```
 
 ### Lambda Layerの更新
@@ -376,10 +424,21 @@ aws lambda delete-layer-version \
 ### 開発に参加する場合
 
 1. このリポジトリをフォーク
-2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
+2. 開発環境をセットアップ
+   ```bash
+   git clone https://github.com/yourusername/jp-holiday-calendar.git
+   cd jp-holiday-calendar
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt -r requirements-dev.txt
+   npm install  # pre-commitフック用
+   npm run prepare
+   ```
+3. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
+4. 変更をコミット (`git commit -m 'Add amazing feature'`)
+   - pre-commitフックが自動実行され、コード品質とテストを確認
+5. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+6. プルリクエストを作成
 
 ## 📞 サポート
 
