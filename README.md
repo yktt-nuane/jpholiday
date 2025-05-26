@@ -417,29 +417,3 @@ aws lambda delete-layer-version \
 
 [MIT License](LICENSE)
 
-## 🤝 貢献
-
-プルリクエストや Issue の作成を歓迎します！
-
-### 開発に参加する場合
-
-1. このリポジトリをフォーク
-2. 開発環境をセットアップ
-   ```bash
-   git clone https://github.com/yourusername/jp-holiday-calendar.git
-   cd jp-holiday-calendar
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt -r requirements-dev.txt
-   npm install  # pre-commitフック用
-   npm run prepare
-   ```
-3. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
-4. 変更をコミット (`git commit -m 'Add amazing feature'`)
-   - pre-commitフックが自動実行され、コード品質とテストを確認
-5. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-6. プルリクエストを作成
-
-## 📞 サポート
-
-問題や質問がある場合は、[Issues](https://github.com/yourusername/jp-holiday-calendar/issues)で報告してください。
