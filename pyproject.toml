@@ -1,0 +1,37 @@
+[tool.black]
+line-length = 100
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+# Ruff is used as a linter (not as a formatter)
+line-length = 100
+target-version = "py39"
+select = ["E", "F", "I"]
+ignore = ["E501"]  # line too long (handled by Black)
+exclude = ["cdk.out/", ".venv/", "asset.*", "lambda/"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+ignore_missing_imports = true
+follow_imports = "silent"
+exclude = ["cdk.out/", ".venv/", "asset.*", "lambda/"]
+
+[[tool.mypy.overrides]]
+module = "jpholiday.*"
+disable_error_code = ["list-item"]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"

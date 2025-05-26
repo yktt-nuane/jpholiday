@@ -1,13 +1,25 @@
-# lambda/index.py
+"""Lambda function to fetch and store Japanese holidays."""
 import os
-import boto3
-import jpholiday
 from datetime import datetime, timedelta
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table(os.environ['TABLE_NAME'])
+import boto3
+
+import jpholiday
+
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table(os.environ["TABLE_NAME"])
+
 
 def handler(event, context):
+    """Lambda handler function to process Japanese holidays.
+
+    Args:
+        event: Lambda event object
+        context: Lambda context object
+
+    Returns:
+        dict: Response with status code and body
+    """
     current_date = datetime.now()
     end_date = current_date + timedelta(days=365)
 
@@ -15,14 +27,9 @@ def handler(event, context):
 
     with table.batch_writer() as batch:
         for holiday_date, holiday_name in holidays:
-            batch.put_item(
-                Item={
-                    'date': holiday_date.strftime('%Y-%m-%d'),
-                    'name': holiday_name
-                }
-            )
+            batch.put_item(Item={"date": holiday_date.strftime("%Y-%m-%d"), "name": holiday_name})
 
     return {
-        'statusCode': 200,
-        'body': f'Successfully updated holidays from {current_date.date()} to {end_date.date()}'
+        "statusCode": 200,
+        "body": f"Successfully updated holidays from {current_date.date()} to {end_date.date()}",
     }

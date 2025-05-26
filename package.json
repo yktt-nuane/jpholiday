@@ -1,0 +1,13 @@
+{
+    "name": "jp-holiday-calendar",
+    "version": "1.0.0",
+    "description": "Japanese holiday calendar AWS CDK project",
+    "scripts": {
+        "prepare": "husky install",
+        "lint": "ruff check . && ruff format --check . && mypy .",
+        "test": "pytest"
+    },
+    "devDependencies": {
+        "husky": "^8.0.3"
+    }
+}
