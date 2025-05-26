@@ -1,12 +1,12 @@
-# Testing
-pytest==6.2.5
-pytest-cov==4.0.0
+# Testing - Updated versions for Python 3.12 compatibility
+pytest==8.3.3
+pytest-cov==6.0.0
 
-# Code formatting and linting
-black==23.12.1
+# Code formatting and linting - Latest stable versions
+black==24.10.0
 isort==5.13.2
-ruff==0.1.9
-mypy==1.8.0
+ruff==0.8.4
+mypy==1.13.0
 
-# Pre-commit hooks
-pre-commit==3.6.0
+# Pre-commit hooks - Latest version
+pre-commit==4.0.1

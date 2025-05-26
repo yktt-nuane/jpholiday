@@ -5,6 +5,7 @@
     "scripts": {
         "prepare": "husky install",
         "lint": "ruff check . && ruff format --check . && mypy .",
+        "format": "black . && isort . && ruff format .",
         "test": "pytest"
     },
     "devDependencies": {

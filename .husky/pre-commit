@@ -5,6 +5,7 @@
 echo "🔍 Auto-formatting Python code..."
 python -m black . --line-length 100 || { echo "❌ Black formatting failed"; exit 1; }
 python -m isort . --profile black --line-length 100 || { echo "❌ Import sorting failed"; exit 1; }
+python -m ruff format . || { echo "❌ Ruff formatting failed"; exit 1; }
 
 # Run code quality checks
 echo "🔍 Running Python code quality checks..."
