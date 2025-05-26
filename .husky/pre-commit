@@ -12,4 +12,8 @@ echo "🔍 Running Python code quality checks..."
 python -m ruff check . || { echo "❌ Ruff check failed"; exit 1; }
 python -m mypy . || { echo "❌ Type check failed"; exit 1; }
 
+# Run tests
+echo "🧪 Running tests..."
+python -m pytest tests/ -v --tb=short || { echo "❌ Tests failed"; exit 1; }
+
 echo "✅ All pre-commit checks passed!"
