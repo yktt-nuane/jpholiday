@@ -3,17 +3,17 @@
 
 # Auto-format Python files
 echo "🔍 Auto-formatting Python code..."
-python -m black . --line-length 100 || { echo "❌ Black formatting failed"; exit 1; }
-python -m isort . --profile black --line-length 100 || { echo "❌ Import sorting failed"; exit 1; }
-python -m ruff format . || { echo "❌ Ruff formatting failed"; exit 1; }
+python3 -m black . --line-length 100 || { echo "❌ Black formatting failed"; exit 1; }
+python3 -m isort . --profile black --line-length 100 || { echo "❌ Import sorting failed"; exit 1; }
+python3 -m ruff format . || { echo "❌ Ruff formatting failed"; exit 1; }
 
 # Run code quality checks
 echo "🔍 Running Python code quality checks..."
-python -m ruff check . || { echo "❌ Ruff check failed"; exit 1; }
-python -m mypy . || { echo "❌ Type check failed"; exit 1; }
+python3 -m ruff check . || { echo "❌ Ruff check failed"; exit 1; }
+python3 -m mypy . || { echo "❌ Type check failed"; exit 1; }
 
 # Run tests
 echo "🧪 Running tests..."
-python -m pytest tests/ -v --tb=short || { echo "❌ Tests failed"; exit 1; }
+python3 -m pytest tests/ -v --tb=short || { echo "❌ Tests failed"; exit 1; }
 
 echo "✅ All pre-commit checks passed!"

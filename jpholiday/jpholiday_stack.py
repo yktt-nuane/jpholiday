@@ -72,13 +72,19 @@ class JpHolidayStack(Stack):
         holiday_function = _lambda.Function(
             self,
             "JpHolidayFunction",
-            runtime=_lambda.Runtime.PYTHON_3_9,
+            runtime=_lambda.Runtime.PYTHON_3_12,
             handler="index.handler",
             code=_lambda.Code.from_asset("lambda"),
             timeout=Duration.seconds(lambda_timeout),
             memory_size=lambda_memory,
             layers=[jpholiday_layer],
-            environment={"TABLE_NAME": holiday_table.table_name, "STAGE": stage},
+            environment={
+                "TABLE_NAME": holiday_table.table_name,
+                "STAGE": stage,
+                "POWERTOOLS_SERVICE_NAME": "jpholiday",
+                "POWERTOOLS_LOG_LEVEL": os.getenv("LOG_LEVEL", "INFO"),
+                "LOG_LEVEL": os.getenv("LOG_LEVEL", "INFO"),
+            },
         )
 
         # Grant permissions

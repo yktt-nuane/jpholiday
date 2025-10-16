@@ -418,6 +418,7 @@ logs/
 
 # Lambda Layerビルド用一時ディレクトリ
 /tmp/lambda-layer/
+lambda-layer/
 
 # Terraform関連（もし併用する場合）
 *.tfstate

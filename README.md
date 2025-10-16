@@ -1,6 +1,6 @@
 # 日本の祝日カレンダー AWS CDK
 
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)](https://www.python.org)
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?logo=python&logoColor=white)](https://www.python.org)
 [![AWS CDK](https://img.shields.io/badge/AWS%20CDK-v2.162+-orange.svg?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/cdk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -42,7 +42,7 @@
 
 - [AWSアカウント](https://aws.amazon.com/jp/account/) - 適切なIAM権限を持つ
 - [AWS CLI](https://aws.amazon.com/jp/cli/) v2.x - 認証情報が設定済み
-- [Python](https://www.python.org/) 3.9以上
+- [Python](https://www.python.org/) 3.12以上
 - [Node.js](https://nodejs.org/) v16以上（CDK CLI・pre-commitフック用）
 - [AWS CDK Toolkit](https://docs.aws.amazon.com/cdk/latest/guide/cli.html) - `npm install -g aws-cdk`
 
@@ -122,36 +122,75 @@ pre-commitフックは以下を自動実行します：
 
 Lambda関数で外部ライブラリ（jpholiday）を使用するため、Lambda Layerを事前に作成する必要があります。
 
-### 方法1: AWS CLIを使用
+### 方法1: Docker使用（推奨 - Apple Siliconなど）
+
+Apple Silicon (M1/M2/M3) など、開発環境とAWS Lambda (x86_64) のアーキテクチャが異なる場合は、Dockerを使用してクロスプラットフォームビルドを行います。
 
 ```bash
 # 1. 作業ディレクトリの作成
-mkdir -p /tmp/lambda-layer/python
+mkdir -p lambda-layer
 
-# 2. jpholidayライブラリのインストール
-pip install jpholiday -t /tmp/lambda-layer/python
+# 2. Dockerコンテナ内でライブラリをインストール（x86_64アーキテクチャ）
+docker run --platform linux/amd64 --rm \
+  -v "$PWD/lambda-layer:/var/task" \
+  --entrypoint /bin/bash \
+  public.ecr.aws/lambda/python:3.12 \
+  -c "pip install jpholiday boto3 aws-lambda-powertools -t /var/task/python"
 
 # 3. ZIPファイルの作成
-cd /tmp/lambda-layer
+cd lambda-layer
 zip -r jpholiday-layer.zip python/
 
 # 4. Lambda Layerの作成
 aws lambda publish-layer-version \
-  --layer-name jpholiday-layer \
-  --description "jpholiday library for Japanese holidays" \
-  --compatible-runtimes python3.9 \
+  --layer-name python-jpholiday-layer \
+  --description "jpholiday, boto3, and aws-lambda-powertools for Python 3.12" \
+  --compatible-runtimes python3.12 \
   --zip-file fileb://jpholiday-layer.zip \
   --region ap-northeast-1
 
 # 5. 出力されたLayerVersionArnを.envファイルのJPHOLIDAY_LAYER_ARNに設定
+cd ..
 ```
 
-### 方法2: AWS Consoleを使用
+**注意点:**
+- `--platform linux/amd64` で x86_64 アーキテクチャを指定
+- AWS Lambda の公式Pythonイメージを使用
+- Apple Silicon環境でも正しくx86_64用のバイナリを生成
+
+### 方法2: ローカルインストール（x86_64環境のみ）
+
+開発環境がx86_64の場合は、ローカルで直接インストールできます。
+
+```bash
+# 1. 作業ディレクトリの作成
+mkdir -p lambda-layer/python
+
+# 2. 必要なライブラリのインストール
+pip install jpholiday boto3 aws-lambda-powertools -t lambda-layer/python
+
+# 3. ZIPファイルの作成
+cd lambda-layer
+zip -r jpholiday-layer.zip python/
+
+# 4. Lambda Layerの作成
+aws lambda publish-layer-version \
+  --layer-name python-jpholiday-layer \
+  --description "jpholiday, boto3, and aws-lambda-powertools for Python 3.12" \
+  --compatible-runtimes python3.12 \
+  --zip-file fileb://jpholiday-layer.zip \
+  --region ap-northeast-1
+
+# 5. 出力されたLayerVersionArnを.envファイルのJPHOLIDAY_LAYER_ARNに設定
+cd ..
+```
+
+### 方法3: AWS Consoleを使用
 
 1. AWS Lambda コンソール → 「レイヤー」→「レイヤーの作成」
 2. レイヤー名: `jpholiday-layer`
 3. 上記で作成したZIPファイルをアップロード
-4. 互換性のあるランタイム: `Python 3.9`
+4. 互換性のあるランタイム: `Python 3.12`
 5. 作成後、ARNを`.env`ファイルに設定
 
 ## 🚀 デプロイ
@@ -348,6 +387,31 @@ aws logs describe-log-streams \
 - 環境変数は`.env`ファイルで管理（`.gitignore`に含まれる）
 - VPC内での実行は不要（パブリックAPI使用）
 - CloudWatch Logsで実行履歴を追跡可能
+
+## 📊 ベストプラクティスの実装
+
+このプロジェクトは、AWS Lambda Python 3.12の以下のベストプラクティスを実装しています：
+
+### 1. 構造化ログ（AWS Powertools）
+- **AWS Powertools for Lambda (Python)** を使用したJSON形式の構造化ログ
+- Correlation IDによる分散トレーシング対応
+- ログレベルの適切な使い分け（DEBUG/INFO/ERROR）
+- リクエスト単位での追跡が可能
+
+### 2. エラーハンドリング
+- DynamoDB ClientErrorの適切な捕捉
+- 例外スタックトレースのログ出力
+- ユーザーフレンドリーなエラーレスポンス
+
+### 3. 依存関係管理
+- boto3を明示的にrequirements.txtに追加
+- バージョン固定による後方互換性の確保
+- Lambda Layerでの依存関係の一元管理
+
+### 4. 監視・観測性
+- 構造化ログによる効率的なログ検索
+- CloudWatch Logsでの実行メトリクス追跡
+- エラー発生時の詳細情報記録
 
 ## 🚨 トラブルシューティング
 

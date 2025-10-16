@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 100
-target-version = ['py39']
+target-version = ['py312']
 include = '\.pyi?$'
 
 [tool.isort]
@@ -10,7 +10,7 @@ line_length = 100
 [tool.ruff]
 # Ruff is used as a linter (not as a formatter)
 line-length = 100
-target-version = "py39"
+target-version = "py312"
 # Exclude patterns
 exclude = [
     "cdk.out/",
@@ -27,7 +27,7 @@ ignore = ["E501"]  # line too long (handled by Black)
 "__init__.py" = ["F401"]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
